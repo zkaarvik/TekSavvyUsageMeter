@@ -6,7 +6,7 @@
   "version": "0.1",
 
   "permissions": [
-    "https://secure.flickr.com/",
+    "storage",
     "https://api.teksavvy.com/"
   ],
   "browser_action": {

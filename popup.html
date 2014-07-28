@@ -1,7 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Getting Started Extension's Popup</title>
+    <title>TekSavvy Usage Meter</title>
     <style>
       body {
         min-width: 357px;
@@ -20,9 +20,11 @@
     <script src="popup.js"></script>
   </head>
   <body>
-    <div id="currentMonthTitle">
-      Current Monthly Usage:
-    </div>
+    <div id="apiKeyTitle">API Key:</div>
+    <input id="apiKey" type="text" />
+    <button id="setApiKeyButton" type="button">Set</button>
+
+    <div id="currentMonthTitle">Current Monthly Usage:</div>
     <div id="currentMonthAmount"> </div>
   </body>
 </html>
