@@ -4,14 +4,20 @@ var tekSavvy = {
 
   initialization: function() {
     //Set function to save API key when "set" button is pressed
-    document.getElementById("setApiKeyButton").addEventListener("click", this.onSetApiKey);
+    $("#setApiKeyButton").click(this.onSetApiKey);
+    //Set function to show/hide API key input box
+    $("#apiKeyTitle").click(this.onClickApiKeyTitle);
+
+    //Hide api key input by default
+    $("#apiKeyInput").hide();
 
     //Retreive API key - if saved then request usage
     chrome.storage.sync.get('apiKey', function(data) {
         if(data.apiKey) {
             tekSavvy.requestUsage(data.apiKey);
-            var oApiKeyDiv = document.getElementById("apiKey");
-            oApiKeyDiv.value = data.apiKey;
+
+            $("#apiKeyInputValue").val(data.apiKey);
+            $("#apiKeyTitleDisplay").html(data.apiKey);
         }
     });
   },
@@ -25,9 +31,10 @@ var tekSavvy = {
   },
 
   processUsage: function (e) {
-    //API Key bad - display error 
     if(!e.target.response) {
-        document.getElementById("currentMonthAmount").innerHTML = "Error retreiving data: Check API Key";
+        //API Key bad - display error 
+        $("#currentMonthAmount").html( null );
+        $("#currentMonthAmountError").html( "Error retreiving data: Check API Key" );
         return;
     }
 
@@ -39,19 +46,27 @@ var tekSavvy = {
     var iOffPeakDownload = oUsage.value[0].OffPeakDownload;
     var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
 
-    document.getElementById("currentMonthAmount").innerHTML = (iPeakDownload+iPeakUpload).toString();
+    $("#currentMonthAmount").html( (iPeakDownload+iPeakUpload).toString() );
+    $("#currentMonthAmountError").html( null );
 
   },
 
   onSetApiKey: function(e) {
-    var oApiKeyDiv = document.getElementById("apiKey");
-    var sApiKey = oApiKeyDiv.value;
+    var sApiKey = $("#apiKeyInputValue").val();
 
     chrome.storage.sync.set({'apiKey': sApiKey}, function() {
         if(this.args[1].apiKey) {
             tekSavvy.requestUsage(this.args[1].apiKey);
         }
     });
+  },
+
+  onClickApiKeyTitle: function(e) {
+    if($('#apiKeyInput').is(':visible')){
+       $("#apiKeyInput").hide();
+    } else {
+        $("#apiKeyInput").show();
+    }
   }
 
 };

@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>TekSavvy Usage Meter</title>
-    <style>
-      body {
-        min-width: 357px;
-        overflow-x: hidden;
-      }
+    <head>
+        <title>TekSavvy Usage Meter</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
 
-      img {
-        margin: 5px;
-        border: 2px solid black;
-        vertical-align: middle;
-        width: 75px;
-        height: 75px;
-      }
-    </style>
+        <script src="lib/jquery-2.1.1.min.js"></script>
+        <script src="popup.js"></script>
+    </head>
+    <body>
+        <div id="apiKeyTitle">
+            <div id="apiKeyTitleText">API Key:</div>
+            <div id="apiKeyTitleDisplay" />
+        </div>
+        <div id="apiKeyInput">
+            <input id="apiKeyInputValue" type="text" />
+            <button id="setApiKeyButton" type="button">Set</button>
+        </div>
 
-    <script src="popup.js"></script>
-  </head>
-  <body>
-    <div id="apiKeyTitle">API Key:</div>
-    <input id="apiKey" type="text" />
-    <button id="setApiKeyButton" type="button">Set</button>
-
-    <div id="currentMonthTitle">Current Monthly Usage:</div>
-    <div id="currentMonthAmount"> </div>
-  </body>
+        <div id="currentMonthTitle">Current Monthly Usage:</div>
+        <div id="currentMonthAmount" /> 
+        <div id="currentMonthAmountError" /> 
+    </body>
 </html>
 
