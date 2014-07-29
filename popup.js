@@ -6,13 +6,13 @@ var tekSavvy = {
     initialization: function() {
         //Set function to save API key when "set" button is pressed
         $("#setApiKeyButton").click(this.onSetApiKey);
-        //Set function to show/hide API key input box
-        $("#apiKeyTitle").click(this.onClickApiKeyTitle);
+        //Set function to show/hide settings input box
+        $("#settingsTitle").click(this.onClickSettingsTitle);
         //Set function to save maximum monthly usage when it is changed
         $("#maximumUsageDropdown").change(this.onChangeMaximumUsage);
 
-        //Hide api key input by default
-        $("#apiKeyInput").hide();
+        //Hide settings by default - maybe move to css
+        $("#settingsContent").hide();
 
         //Retreive maximum usage - if saved then request usage
         chrome.storage.sync.get('maximumUsage', function(data) {
@@ -27,7 +27,6 @@ var tekSavvy = {
                 tekSavvy.requestUsage(data.apiKey);
 
                 $("#apiKeyInputValue").val(data.apiKey);
-                $("#apiKeyTitleDisplay").html(data.apiKey);
             }
         });
 
@@ -59,7 +58,7 @@ var tekSavvy = {
         var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
 
 
-        $("#currentMonthAmount").html(this.iTotalPeak.toFixed(2).toString());
+        $("#currentMonthAmount").html(this.iTotalPeak.toFixed(2).toString() + " GB");
         $("#currentMonthAmountError").html(null);
 
         this.updatePercentage();
@@ -87,11 +86,11 @@ var tekSavvy = {
         });
     },
 
-    onClickApiKeyTitle: function(e) {
-        if ($('#apiKeyInput').is(':visible')) {
-            $("#apiKeyInput").hide();
+    onClickSettingsTitle: function(e) {
+        if ($('#settingsContent').is(':visible')) {
+            $("#settingsContent").hide();
         } else {
-            $("#apiKeyInput").show();
+            $("#settingsContent").show();
         }
     },
 

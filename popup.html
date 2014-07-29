@@ -10,28 +10,34 @@
 </head>
 
 <body>
-    <div id="apiKeyTitle">
-        <div id="apiKeyTitleText">API Key:</div>
-        <div id="apiKeyTitleDisplay"></div>
-    </div>
-    <div id="apiKeyInput">
-        <input id="apiKeyInputValue" type="text" />
-        <button id="setApiKeyButton" type="button">Set</button>
-    </div>
+
 
     <div id="currentMonthTitle">Current Monthly Usage:</div>
     <div id="currentMonthAmount"></div>
     <div id="currentMonthAmountError"></div>
 
-    <div id="maximumUsageTitle">Maximum Monthly Usage:</div>
-    <select id="maximumUsageDropdown">
-        <option value="75">75 GB</option>
-        <option value="150">150 GB</option>
-        <option value="300">300 GB</option>
-        <option value="unlimited">Unlimited</option>
-    </select>
 
-    <div id="currentMonthPercentage"> </div>
+
+    <div id="currentMonthPercentage"></div>
+
+    <div id="settingsTitle">Settings</div>
+    <div id="settingsContent">
+        <div id="apiKeyTitle">
+            <div id="apiKeyTitleText">API Key</div>
+        </div>
+        <div id="apiKeyInput">
+            <input id="apiKeyInputValue" type="text" />
+            <button id="setApiKeyButton" type="button">Set</button>
+        </div>
+
+        <div id="maximumUsageTitle">Maximum Monthly Usage:</div>
+        <select id="maximumUsageDropdown">
+            <option value="75">75 GB</option>
+            <option value="150">150 GB</option>
+            <option value="300">300 GB</option>
+            <option value="unlimited">Unlimited</option>
+        </select>
+    </div>
 
 </body>
 
