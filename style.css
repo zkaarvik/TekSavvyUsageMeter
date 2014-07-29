@@ -1,4 +1,18 @@
 body {
-    min-width: 24rem;
+    min-width: 19rem;
     overflow-x: hidden;
+    font-family: arial;
+}
+.horizontalSpaceAboveX1 {
+    margin-top: 0.5rem;
+}
+.horizontalSpaceAboveX2 {
+    margin-top: 1rem;
+}
+#apiKeyInputValue {
+    width: 16rem;
+}
+#tekSavvyUsageTitle {
+    font-weight: bold;
+    font-size: 16pt;
 }
