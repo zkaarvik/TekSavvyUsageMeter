@@ -1,76 +1,112 @@
 var tekSavvy = {
 
-  sUsageURL: "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true",
+    sUsageURL: "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true",
+    iTotalPeak: 0,
 
-  initialization: function() {
-    //Set function to save API key when "set" button is pressed
-    $("#setApiKeyButton").click(this.onSetApiKey);
-    //Set function to show/hide API key input box
-    $("#apiKeyTitle").click(this.onClickApiKeyTitle);
+    initialization: function() {
+        //Set function to save API key when "set" button is pressed
+        $("#setApiKeyButton").click(this.onSetApiKey);
+        //Set function to show/hide API key input box
+        $("#apiKeyTitle").click(this.onClickApiKeyTitle);
+        //Set function to save maximum monthly usage when it is changed
+        $("#maximumUsageDropdown").change(this.onChangeMaximumUsage);
 
-    //Hide api key input by default
-    $("#apiKeyInput").hide();
+        //Hide api key input by default
+        $("#apiKeyInput").hide();
 
-    //Retreive API key - if saved then request usage
-    chrome.storage.sync.get('apiKey', function(data) {
-        if(data.apiKey) {
-            tekSavvy.requestUsage(data.apiKey);
+        //Retreive maximum usage - if saved then request usage
+        chrome.storage.sync.get('maximumUsage', function(data) {
+            if (data.maximumUsage) {
+                $("#maximumUsageDropdown").val(data.maximumUsage);
+            }
+        });
 
-            $("#apiKeyInputValue").val(data.apiKey);
-            $("#apiKeyTitleDisplay").html(data.apiKey);
+        //Retreive API key - if saved then request usage
+        chrome.storage.sync.get('apiKey', function(data) {
+            if (data.apiKey) {
+                tekSavvy.requestUsage(data.apiKey);
+
+                $("#apiKeyInputValue").val(data.apiKey);
+                $("#apiKeyTitleDisplay").html(data.apiKey);
+            }
+        });
+
+    },
+
+    requestUsage: function(sApiKey) {
+        var req = new XMLHttpRequest();
+        req.open("GET", this.sUsageURL, true);
+        req.setRequestHeader("TekSavvy-APIKey", sApiKey);
+        req.onload = this.processUsage.bind(this);
+        req.send(null);
+    },
+
+    processUsage: function(e) {
+        if (!e.target.response) {
+            //API Key bad - display error 
+            $("#currentMonthAmount").html(null);
+            $("#currentMonthAmountError").html("Error retreiving data: Check API Key");
+            return;
         }
-    });
-  },
 
-  requestUsage: function(sApiKey) {
-    var req = new XMLHttpRequest();
-    req.open("GET", this.sUsageURL, true);
-    req.setRequestHeader("TekSavvy-APIKey", sApiKey);
-    req.onload = this.processUsage.bind(this);
-    req.send(null);
-  },
+        var oUsage = JSON.parse(e.target.response);
 
-  processUsage: function (e) {
-    if(!e.target.response) {
-        //API Key bad - display error 
-        $("#currentMonthAmount").html( null );
-        $("#currentMonthAmountError").html( "Error retreiving data: Check API Key" );
-        return;
-    }
+        var iPeakDownload = oUsage.value[0].OnPeakDownload;
+        var iPeakUpload = oUsage.value[0].OnPeakUpload;
+        this.iTotalPeak = iPeakDownload + iPeakUpload;
 
-    var oUsage = JSON.parse(e.target.response);
+        var iOffPeakDownload = oUsage.value[0].OffPeakDownload;
+        var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
 
-    var iPeakDownload = oUsage.value[0].OnPeakDownload;
-    var iPeakUpload = oUsage.value[0].OnPeakUpload;
 
-    var iOffPeakDownload = oUsage.value[0].OffPeakDownload;
-    var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
+        $("#currentMonthAmount").html(this.iTotalPeak.toFixed(2).toString());
+        $("#currentMonthAmountError").html(null);
 
-    $("#currentMonthAmount").html( (iPeakDownload+iPeakUpload).toString() );
-    $("#currentMonthAmountError").html( null );
+        this.updatePercentage();
+    },
 
-  },
-
-  onSetApiKey: function(e) {
-    var sApiKey = $("#apiKeyInputValue").val();
-
-    chrome.storage.sync.set({'apiKey': sApiKey}, function() {
-        if(this.args[1].apiKey) {
-            tekSavvy.requestUsage(this.args[1].apiKey);
+    updatePercentage: function() {
+        var sMaximumUsage = $("#maximumUsageDropdown").val();
+        if (sMaximumUsage !== "unlimited") {
+            var iPercentageUsage = (this.iTotalPeak / parseInt(sMaximumUsage) * 100);
+            $("#currentMonthPercentage").html(iPercentageUsage.toFixed(0) + "%");
+        } else {
+            $("#currentMonthPercentage").html(null);
         }
-    });
-  },
+    },
 
-  onClickApiKeyTitle: function(e) {
-    if($('#apiKeyInput').is(':visible')){
-       $("#apiKeyInput").hide();
-    } else {
-        $("#apiKeyInput").show();
+    onSetApiKey: function(e) {
+        var sApiKey = $("#apiKeyInputValue").val();
+
+        chrome.storage.sync.set({
+            'apiKey': sApiKey
+        }, function() {
+            if (this.args[1].apiKey) {
+                tekSavvy.requestUsage(this.args[1].apiKey);
+            }
+        });
+    },
+
+    onClickApiKeyTitle: function(e) {
+        if ($('#apiKeyInput').is(':visible')) {
+            $("#apiKeyInput").hide();
+        } else {
+            $("#apiKeyInput").show();
+        }
+    },
+
+    onChangeMaximumUsage: function(e) {
+        var sMaximumUsage = $("#maximumUsageDropdown").val();
+
+        chrome.storage.sync.set({
+            'maximumUsage': sMaximumUsage
+        }, function() {
+            tekSavvy.updatePercentage();
+        });
     }
-  }
 
 };
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     tekSavvy.initialization();
 });
