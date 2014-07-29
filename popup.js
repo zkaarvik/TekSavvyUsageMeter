@@ -45,6 +45,7 @@ var tekSavvy = {
             //API Key bad - display error 
             $("#currentMonthAmount").html(null);
             $("#currentMonthAmountError").html("Error retreiving data: Check API Key");
+            $("#currentMonthPercentage").html(null);
             return;
         }
 
