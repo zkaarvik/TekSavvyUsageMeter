@@ -53,7 +53,7 @@ var tekSavvy = {
 
         var iPeakDownload = oUsage.value[0].OnPeakDownload;
         var iPeakUpload = oUsage.value[0].OnPeakUpload;
-        this.iTotalPeak = iPeakDownload + iPeakUpload;
+        this.iTotalPeak = iPeakDownload;
 
         var iOffPeakDownload = oUsage.value[0].OffPeakDownload;
         var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
