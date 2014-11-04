@@ -31,8 +31,16 @@ teksavvyApp.controller('AppController', function($scope) {
         currentMonthAmountError: "",
         currentMonthPercentage: ""
     };
+    $scope.usage = {
+        iPeakDownload: "",
+        iPeakUpload: "",
+        iPeakTotal: "",
+        iOffPeakDownload: "",
+        iOffPeakUpload: "",
+        iOffPeakTotal: ""
+    };
     $scope.apiKey = "";
-
+    
 
     $scope.init = function() {
         var that = this;
@@ -67,9 +75,7 @@ teksavvyApp.controller('AppController', function($scope) {
         chrome.storage.sync.set({
             'maximumUsage': this.maximumUsage
         }, function() {
-            //Error here - need to fix - should be saving the download values in a model
-            //this.amounts.currentMonthPercentage = this.getUsagePercentage(iPeakDownload, that.maximumUsage.value);
-            that.updatePercentage();
+            that.setCurrentMonthValues();
         });
     };
 
@@ -99,19 +105,24 @@ teksavvyApp.controller('AppController', function($scope) {
 
         var oUsage = JSON.parse(e.target.response);
 
-        var iPeakDownload = oUsage.value[0].OnPeakDownload;
-        var iPeakUpload = oUsage.value[0].OnPeakUpload;
 
-        var iOffPeakDownload = oUsage.value[0].OffPeakDownload;
-        var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
+        this.usage.iPeakDownload = oUsage.value[0].OnPeakDownload;
+        this.usage.iPeakUpload = oUsage.value[0].OnPeakUpload;
+        this.usage.iPeakTotal = this.usage.iPeakDownload + this.usage.iPeakUpload;
+        this.usage.iOffPeakDownload = oUsage.value[0].OffPeakDownload;
+        this.usage.iOffPeakUpload = oUsage.value[0].OffPeakUpload;
+        this.usage.iOffPeakTotal = this.usage.iOffPeakDownload + this.usage.iOffPeakUpload;
 
-
-        this.amounts.currentMonthAmount = iPeakDownload.toFixed(2).toString() + " GB";
-        this.amounts.currentMonthAmountError = "";
-        this.amounts.currentMonthPercentage = this.getUsagePercentage(iPeakDownload, this.maximumUsage.value);
+        this.setCurrentMonthValues();
 
         //Experienced issue with view updating, manually trigger update
         $scope.$digest();
+    };
+
+    $scope.setCurrentMonthValues = function() {
+        this.amounts.currentMonthAmount = this.usage.iPeakDownload.toFixed(2).toString() + " GB";
+        this.amounts.currentMonthAmountError = "";
+        this.amounts.currentMonthPercentage = this.getUsagePercentage(this.usage.iPeakDownload, this.maximumUsage.value);
     };
 
     $scope.getUsagePercentage = function(iUsage, iMaximumUsage) {
