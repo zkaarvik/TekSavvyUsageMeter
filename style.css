@@ -3,6 +3,11 @@ body {
     overflow-x: hidden;
     font-family: arial;
 }
+h1 {
+    font-weight: bold;
+    font-size: 16pt;
+    text-align: center;
+}
 .horizontalSpaceAboveX1 {
     margin-top: 0.5rem;
 }
@@ -11,11 +16,6 @@ body {
 }
 #apiKeyInputValue {
     width: 16rem;
-}
-#tekSavvyUsageTitle {
-    font-weight: bold;
-    font-size: 16pt;
-    text-align: center;
 }
 #settingsTitle {
 	display: inline-block;

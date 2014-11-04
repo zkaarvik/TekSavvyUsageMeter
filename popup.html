@@ -14,29 +14,27 @@
 
 <body ng-controller="AppController" data-ng-init="init()">
 
-    <div id="tekSavvyUsageTitle">{{textElements.title}}</div>
+    <h1>{{textElements.title}}</h1>
 
-    <div id="currentMonthTitle" class="horizontalSpaceAboveX2">{{textElements.currentUsage}}</div>
-    <div id="currentMonthAmount" class="horizontalSpaceAboveX1"></div>
-    <div id="currentMonthAmountError"></div>
+    <div class="horizontalSpaceAboveX2">{{textElements.currentUsage}}</div>
+    <div class="horizontalSpaceAboveX1">{{amounts.currentMonthAmount}}</div>
+    <div>{{amounts.currentMonthAmountError}}</div>
+    <div>{{amounts.currentMonthPercentage}}</div>
 
-
-
-    <div id="currentMonthPercentage"></div>
-
+    <!-- Settings -->
     <div id="settingsTitle" class="horizontalSpaceAboveX2" ng-click="onClickSettingsTitle()">{{textElements.settings}}</div>
-    <button id="saveButton" type="button" ng-click="onClickSave()">{{textElements.save}}</button>
+    <button type="button" ng-click="onClickSave()" ng-hide="settingsHidden">{{textElements.save}}</button>
 
-    <div id="settingsContent">
-        <div id="apiKeyTitle" class="horizontalSpaceAboveX1">
-            <div id="apiKeyTitleText">{{textElements.apiKey}}</div>
+    <div ng-hide="settingsHidden">
+        <div class="horizontalSpaceAboveX1">
+            <div>{{textElements.apiKey}}</div>
         </div>
-        <div id="apiKeyInput">
+        <div>
             <input id="apiKeyInputValue" type="text" ng-model="apiKey" />
         </div>
 
-        <div id="maximumUsageTitle" class="horizontalSpaceAboveX1">{{textElements.maxMonthlyUsage}}</div>
-        <select id="maximumUsageDropdown" ng-model="maximumUsage" ng-options="usage.name for usage in usageValues">
+        <div class="horizontalSpaceAboveX1">{{textElements.maxMonthlyUsage}}</div>
+        <select ng-model="maximumUsage" ng-options="usage.name for usage in usageValues track by usage.name">
         </select>
     </div>
 

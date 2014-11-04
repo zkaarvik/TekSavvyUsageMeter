@@ -26,14 +26,16 @@ teksavvyApp.controller('AppController', function($scope) {
 
     $scope.iTotalPeak = 0;
     $scope.sUsageURL = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
+    $scope.settingsHidden = true;
+    $scope.amounts = {
+        currentMonthAmount: "",
+        currentMonthAmountError: "",
+        currentMonthPercentage: ""
+    };
 
 
     $scope.init = function() {
         var that = this;
-
-        //Hide settings by default - maybe move to css
-        $("#settingsContent").hide();
-        $("#saveButton").hide();
 
         //Retreive maximum usage - if saved
         chrome.storage.sync.get('maximumUsage', function(data) {
@@ -73,13 +75,7 @@ teksavvyApp.controller('AppController', function($scope) {
     };
 
     $scope.onClickSettingsTitle = function() {
-        if ($('#settingsContent').is(':visible')) {
-            $("#settingsContent").hide();
-            $("#saveButton").hide();
-        } else {
-            $("#settingsContent").show();
-            $("#saveButton").show();
-        }
+        this.settingsHidden = !this.settingsHidden;
     };
 
     $scope.requestUsage = function(sApiKey) {
@@ -93,9 +89,11 @@ teksavvyApp.controller('AppController', function($scope) {
     $scope.processUsage = function(e) {
         if (!e.target.response) {
             //API Key bad - display error 
-            $("#currentMonthAmount").html(null);
-            $("#currentMonthAmountError").html("Error retreiving data: Check API Key");
-            $("#currentMonthPercentage").html(null);
+            this.amounts.currentMonthAmount = "";
+            this.amounts.currentMonthAmountError = "Error retreiving data: Check API Key";
+            this.amounts.currentMonthPercentage = "";
+            //Experienced issue with view updating, manually trigger update
+            $scope.$digest();
             return;
         }
 
@@ -109,18 +107,21 @@ teksavvyApp.controller('AppController', function($scope) {
         var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
 
 
-        $("#currentMonthAmount").html(this.iTotalPeak.toFixed(2).toString() + " GB");
-        $("#currentMonthAmountError").html(null);
+        this.amounts.currentMonthAmount = this.iTotalPeak.toFixed(2).toString() + " GB";
+        this.amounts.currentMonthAmountError = "";
 
         this.updatePercentage();
+
+        //Experienced issue with view updating, manually trigger update
+        $scope.$digest();
     };
 
     $scope.updatePercentage = function() {
         if (this.maximumUsage.value !== 0) {
             var iPercentageUsage = (this.iTotalPeak / parseInt(this.maximumUsage.value) * 100);
-            $("#currentMonthPercentage").html(iPercentageUsage.toFixed(0) + "%");
+            this.amounts.currentMonthPercentage = iPercentageUsage.toFixed(0) + "%";
         } else {
-            $("#currentMonthPercentage").html(null);
+            this.amounts.currentMonthPercentage = "";
         }
     };
 });
