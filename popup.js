@@ -24,7 +24,6 @@ teksavvyApp.controller('AppController', function($scope) {
         value: 0
     }];
 
-    $scope.iTotalPeak = 0;
     $scope.sUsageURL = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
     $scope.settingsHidden = true;
     $scope.amounts = {
@@ -47,9 +46,8 @@ teksavvyApp.controller('AppController', function($scope) {
         //Retreive API key - if saved then request usage
         chrome.storage.sync.get('apiKey', function(data) {
             if (data.apiKey) {
-                that.requestUsage(data.apiKey);
-
                 that.apiKey = data.apiKey;
+                that.requestUsage();
             }
         });
     };
@@ -61,15 +59,15 @@ teksavvyApp.controller('AppController', function($scope) {
         chrome.storage.sync.set({
             'apiKey': this.apiKey
         }, function() {
-            if (this.args[1].apiKey) {
-                that.requestUsage(this.args[1].apiKey);
-            }
+            that.requestUsage();
         });
 
         //Save Maximum Usage
         chrome.storage.sync.set({
             'maximumUsage': this.maximumUsage
         }, function() {
+            //Error here - need to fix - should be saving the download values in a model
+            //this.amounts.currentMonthPercentage = this.getUsagePercentage(iPeakDownload, that.maximumUsage.value);
             that.updatePercentage();
         });
     };
@@ -78,15 +76,16 @@ teksavvyApp.controller('AppController', function($scope) {
         this.settingsHidden = !this.settingsHidden;
     };
 
-    $scope.requestUsage = function(sApiKey) {
+    $scope.requestUsage = function() {
+        var sApiKey = this.apiKey;
         var req = new XMLHttpRequest();
         req.open("GET", this.sUsageURL, true);
         req.setRequestHeader("TekSavvy-APIKey", sApiKey);
-        req.onload = this.processUsage.bind(this);
+        req.onload = this.onRequestUsageSuccess.bind(this);
         req.send(null);
     };
 
-    $scope.processUsage = function(e) {
+    $scope.onRequestUsageSuccess = function(e) {
         if (!e.target.response) {
             //API Key bad - display error 
             this.amounts.currentMonthAmount = "";
@@ -101,27 +100,25 @@ teksavvyApp.controller('AppController', function($scope) {
 
         var iPeakDownload = oUsage.value[0].OnPeakDownload;
         var iPeakUpload = oUsage.value[0].OnPeakUpload;
-        this.iTotalPeak = iPeakDownload;
 
         var iOffPeakDownload = oUsage.value[0].OffPeakDownload;
         var iOffPeakUpload = oUsage.value[0].OffPeakUpload;
 
 
-        this.amounts.currentMonthAmount = this.iTotalPeak.toFixed(2).toString() + " GB";
+        this.amounts.currentMonthAmount = iPeakDownload.toFixed(2).toString() + " GB";
         this.amounts.currentMonthAmountError = "";
-
-        this.updatePercentage();
+        this.amounts.currentMonthPercentage = this.getUsagePercentage(iPeakDownload, this.maximumUsage.value);
 
         //Experienced issue with view updating, manually trigger update
         $scope.$digest();
     };
 
-    $scope.updatePercentage = function() {
-        if (this.maximumUsage.value !== 0) {
-            var iPercentageUsage = (this.iTotalPeak / parseInt(this.maximumUsage.value) * 100);
-            this.amounts.currentMonthPercentage = iPercentageUsage.toFixed(0) + "%";
+    $scope.getUsagePercentage = function(iUsage, iMaximumUsage) {
+        if (iMaximumUsage !== 0) {
+            var iPercentageUsage = (iUsage / parseInt(iMaximumUsage) * 100);
+            return iPercentageUsage.toFixed(0) + "%";
         } else {
-            this.amounts.currentMonthPercentage = "";
+            return "";
         }
     };
 });
