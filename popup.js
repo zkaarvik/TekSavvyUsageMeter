@@ -31,6 +31,7 @@ teksavvyApp.controller('AppController', function($scope) {
         currentMonthAmountError: "",
         currentMonthPercentage: ""
     };
+    $scope.apiKey = "";
 
 
     $scope.init = function() {
