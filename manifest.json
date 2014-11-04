@@ -3,7 +3,7 @@
 
   "name": "TekSavvy Usage Meter",
   "description": "Display your current data usage for the month",
-  "version": "0.1",
+  "version": "0.2",
 
   "permissions": [
     "storage",

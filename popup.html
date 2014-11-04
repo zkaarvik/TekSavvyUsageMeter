@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="teksavvyApp" ng-csp>
 
-<head>
+<head lang="en" >
+    <meta charset="utf-8">
     <title>TekSavvy Usage Meter</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="lib/angular-csp.css">
 
+    <script src="lib/angular-1.3.1.min.js"></script>
     <script src="lib/jquery-2.1.1.min.js"></script>
     <script src="popup.js"></script>
 </head>
 
-<body>
-    <div id="tekSavvyUsageTitle">TekSavvy Usage Meter</div>
+<body ng-controller="AppController" data-ng-init="init()">
 
-    <div id="currentMonthTitle" class="horizontalSpaceAboveX2">Current Monthly Usage:</div>
+    <div id="tekSavvyUsageTitle">{{textElements.title}}</div>
+
+    <div id="currentMonthTitle" class="horizontalSpaceAboveX2">{{textElements.currentUsage}}</div>
     <div id="currentMonthAmount" class="horizontalSpaceAboveX1"></div>
     <div id="currentMonthAmountError"></div>
 
@@ -20,22 +24,19 @@
 
     <div id="currentMonthPercentage"></div>
 
-    <div id="settingsTitle" class="horizontalSpaceAboveX2">Settings</div>
+    <div id="settingsTitle" class="horizontalSpaceAboveX2" ng-click="onClickSettingsTitle()">{{textElements.settings}}</div>
+    <button id="saveButton" type="button" ng-click="onClickSave()">{{textElements.save}}</button>
+
     <div id="settingsContent">
         <div id="apiKeyTitle" class="horizontalSpaceAboveX1">
-            <div id="apiKeyTitleText">API Key</div>
+            <div id="apiKeyTitleText">{{textElements.apiKey}}</div>
         </div>
         <div id="apiKeyInput">
-            <input id="apiKeyInputValue" type="text" />
-            <button id="setApiKeyButton" type="button">Set</button>
+            <input id="apiKeyInputValue" type="text" ng-model="apiKey" />
         </div>
 
-        <div id="maximumUsageTitle" class="horizontalSpaceAboveX1">Maximum Monthly Usage:</div>
-        <select id="maximumUsageDropdown">
-            <option value="75">75 GB</option>
-            <option value="150">150 GB</option>
-            <option value="300">300 GB</option>
-            <option value="unlimited">Unlimited</option>
+        <div id="maximumUsageTitle" class="horizontalSpaceAboveX1">{{textElements.maxMonthlyUsage}}</div>
+        <select id="maximumUsageDropdown" ng-model="maximumUsage" ng-options="usage.name for usage in usageValues">
         </select>
     </div>
 

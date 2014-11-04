@@ -17,3 +17,6 @@ body {
     font-size: 16pt;
     text-align: center;
 }
+#settingsTitle {
+	display: inline-block;
+}

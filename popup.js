@@ -1,46 +1,96 @@
-var tekSavvy = {
+var teksavvyApp = angular.module('teksavvyApp', []);
 
-    sUsageURL: "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true",
-    iTotalPeak: 0,
+teksavvyApp.controller('AppController', function($scope) {
+    $scope.textElements = {
+        title: "TekSavvy Usage Meter",
+        currentUsage: "Current Monthly Usage:",
+        settings: "Settings",
+        apiKey: "API Key",
+        save: "Save",
+        maxMonthlyUsage: "Maximum Monthly Usage"
+    };
 
-    initialization: function() {
-        //Set function to save API key when "set" button is pressed
-        $("#setApiKeyButton").click(this.onSetApiKey);
-        //Set function to show/hide settings input box
-        $("#settingsTitle").click(this.onClickSettingsTitle);
-        //Set function to save maximum monthly usage when it is changed
-        $("#maximumUsageDropdown").change(this.onChangeMaximumUsage);
+    $scope.usageValues = [{
+        name: "75 GB",
+        value: 75
+    }, {
+        name: "150 GB",
+        value: 150
+    }, {
+        name: "300 GB",
+        value: 300
+    }, {
+        name: "Unlimited",
+        value: 0
+    }];
+
+    $scope.iTotalPeak = 0;
+    $scope.sUsageURL = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
+
+
+    $scope.init = function() {
+        var that = this;
 
         //Hide settings by default - maybe move to css
         $("#settingsContent").hide();
+        $("#saveButton").hide();
 
-        //Retreive maximum usage - if saved then request usage
+        //Retreive maximum usage - if saved
         chrome.storage.sync.get('maximumUsage', function(data) {
             if (data.maximumUsage) {
-                $("#maximumUsageDropdown").val(data.maximumUsage);
+                that.maximumUsage = data.maximumUsage; 
             }
         });
 
         //Retreive API key - if saved then request usage
         chrome.storage.sync.get('apiKey', function(data) {
             if (data.apiKey) {
-                tekSavvy.requestUsage(data.apiKey);
+                that.requestUsage(data.apiKey);
 
-                $("#apiKeyInputValue").val(data.apiKey);
+                that.apiKey = data.apiKey;
+            }
+        });
+    };
+
+    $scope.onClickSave = function() {
+        var that = this;
+
+        //Save API Key and request usage
+        chrome.storage.sync.set({
+            'apiKey': this.apiKey
+        }, function() {
+            if (this.args[1].apiKey) {
+                that.requestUsage(this.args[1].apiKey);
             }
         });
 
-    },
+        //Save Maximum Usage
+        chrome.storage.sync.set({
+            'maximumUsage': this.maximumUsage
+        }, function() {
+            that.updatePercentage();
+        });
+    };
 
-    requestUsage: function(sApiKey) {
+    $scope.onClickSettingsTitle = function() {
+        if ($('#settingsContent').is(':visible')) {
+            $("#settingsContent").hide();
+            $("#saveButton").hide();
+        } else {
+            $("#settingsContent").show();
+            $("#saveButton").show();
+        }
+    };
+
+    $scope.requestUsage = function(sApiKey) {
         var req = new XMLHttpRequest();
         req.open("GET", this.sUsageURL, true);
         req.setRequestHeader("TekSavvy-APIKey", sApiKey);
         req.onload = this.processUsage.bind(this);
         req.send(null);
-    },
+    };
 
-    processUsage: function(e) {
+    $scope.processUsage = function(e) {
         if (!e.target.response) {
             //API Key bad - display error 
             $("#currentMonthAmount").html(null);
@@ -63,50 +113,14 @@ var tekSavvy = {
         $("#currentMonthAmountError").html(null);
 
         this.updatePercentage();
-    },
+    };
 
-    updatePercentage: function() {
-        var sMaximumUsage = $("#maximumUsageDropdown").val();
-        if (sMaximumUsage !== "unlimited") {
-            var iPercentageUsage = (this.iTotalPeak / parseInt(sMaximumUsage) * 100);
+    $scope.updatePercentage = function() {
+        if (this.maximumUsage.value !== 0) {
+            var iPercentageUsage = (this.iTotalPeak / parseInt(this.maximumUsage.value) * 100);
             $("#currentMonthPercentage").html(iPercentageUsage.toFixed(0) + "%");
         } else {
             $("#currentMonthPercentage").html(null);
         }
-    },
-
-    onSetApiKey: function(e) {
-        var sApiKey = $("#apiKeyInputValue").val();
-
-        chrome.storage.sync.set({
-            'apiKey': sApiKey
-        }, function() {
-            if (this.args[1].apiKey) {
-                tekSavvy.requestUsage(this.args[1].apiKey);
-            }
-        });
-    },
-
-    onClickSettingsTitle: function(e) {
-        if ($('#settingsContent').is(':visible')) {
-            $("#settingsContent").hide();
-        } else {
-            $("#settingsContent").show();
-        }
-    },
-
-    onChangeMaximumUsage: function(e) {
-        var sMaximumUsage = $("#maximumUsageDropdown").val();
-
-        chrome.storage.sync.set({
-            'maximumUsage': sMaximumUsage
-        }, function() {
-            tekSavvy.updatePercentage();
-        });
-    }
-
-};
-
-document.addEventListener('DOMContentLoaded', function() {
-    tekSavvy.initialization();
+    };
 });
