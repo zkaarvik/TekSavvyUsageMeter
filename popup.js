@@ -1,12 +1,10 @@
-var teksavvyApp = angular.module('teksavvyApp', []);
+var teksavvyApp = angular.module('teksavvyApp', ['ngMaterial']);
 
-teksavvyApp.controller('AppController', function($scope) {
+teksavvyApp.controller('AppController', function($scope, $mdBottomSheet) {
     $scope.textElements = {
         title: "TekSavvy Usage Meter",
         currentUsage: "Current Monthly Usage:",
         settings: "Settings",
-        apiKey: "API Key",
-        save: "Save",
         maxMonthlyUsage: "Maximum Monthly Usage"
     };
 
@@ -25,7 +23,8 @@ teksavvyApp.controller('AppController', function($scope) {
     }];
 
     $scope.sUsageURL = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
-    $scope.settingsHidden = true;
+    $scope.settingsVisible = false;
+    $scope.progressVisible = false;
     $scope.amounts = {
         currentMonthAmount: "",
         currentMonthAmountError: "",
@@ -39,8 +38,9 @@ teksavvyApp.controller('AppController', function($scope) {
         iOffPeakUpload: "",
         iOffPeakTotal: ""
     };
-    $scope.apiKey = "";
-    
+    $scope.settings = {
+        apiKey: ""
+    };
 
     $scope.init = function() {
         var that = this;
@@ -55,36 +55,26 @@ teksavvyApp.controller('AppController', function($scope) {
         //Retreive API key - if saved then request usage
         chrome.storage.sync.get('apiKey', function(data) {
             if (data.apiKey) {
-                that.apiKey = data.apiKey;
+                that.settings.apiKey = data.apiKey;
                 that.requestUsage();
             }
         });
     };
 
-    $scope.onClickSave = function() {
-        var that = this;
-
-        //Save API Key and request usage
-        chrome.storage.sync.set({
-            'apiKey': this.apiKey
-        }, function() {
-            that.requestUsage();
+    $scope.onClickSettings = function($event) {
+        $mdBottomSheet.show({
+            templateUrl: 'settings-list-template.html',
+            controller: 'SettingsSheetController',
+            targetEvent: $event
         });
-
-        //Save Maximum Usage
-        chrome.storage.sync.set({
-            'maximumUsage': this.maximumUsage
-        }, function() {
-            that.setCurrentMonthValues();
-        });
-    };
-
-    $scope.onClickSettingsTitle = function() {
-        this.settingsHidden = !this.settingsHidden;
     };
 
     $scope.requestUsage = function() {
-        var sApiKey = this.apiKey;
+        //Start request - show progress meter
+        this.progressVisible = true;
+        $scope.$digest();
+
+        var sApiKey = this.settings.apiKey;
         var req = new XMLHttpRequest();
         req.open("GET", this.sUsageURL, true);
         req.setRequestHeader("TekSavvy-APIKey", sApiKey);
@@ -98,24 +88,23 @@ teksavvyApp.controller('AppController', function($scope) {
             this.amounts.currentMonthAmount = "";
             this.amounts.currentMonthAmountError = "Error retreiving data: Check API Key";
             this.amounts.currentMonthPercentage = "";
-            //Experienced issue with view updating, manually trigger update
-            $scope.$digest();
-            return;
+        } else {
+            var oUsage = JSON.parse(e.target.response);
+
+            this.usage.iPeakDownload = oUsage.value[0].OnPeakDownload;
+            this.usage.iPeakUpload = oUsage.value[0].OnPeakUpload;
+            this.usage.iPeakTotal = this.usage.iPeakDownload + this.usage.iPeakUpload;
+            this.usage.iOffPeakDownload = oUsage.value[0].OffPeakDownload;
+            this.usage.iOffPeakUpload = oUsage.value[0].OffPeakUpload;
+            this.usage.iOffPeakTotal = this.usage.iOffPeakDownload + this.usage.iOffPeakUpload;
+
+            this.setCurrentMonthValues();
         }
 
-        var oUsage = JSON.parse(e.target.response);
-
-
-        this.usage.iPeakDownload = oUsage.value[0].OnPeakDownload;
-        this.usage.iPeakUpload = oUsage.value[0].OnPeakUpload;
-        this.usage.iPeakTotal = this.usage.iPeakDownload + this.usage.iPeakUpload;
-        this.usage.iOffPeakDownload = oUsage.value[0].OffPeakDownload;
-        this.usage.iOffPeakUpload = oUsage.value[0].OffPeakUpload;
-        this.usage.iOffPeakTotal = this.usage.iOffPeakDownload + this.usage.iOffPeakUpload;
-
-        this.setCurrentMonthValues();
-
         //Experienced issue with view updating, manually trigger update
+
+        //Start request - show progress meter
+        this.progressVisible = false;
         $scope.$digest();
     };
 
@@ -128,9 +117,35 @@ teksavvyApp.controller('AppController', function($scope) {
     $scope.getUsagePercentage = function(iUsage, iMaximumUsage) {
         if (iMaximumUsage !== 0) {
             var iPercentageUsage = (iUsage / parseInt(iMaximumUsage) * 100);
-            return iPercentageUsage.toFixed(0) + "%";
+            return iPercentageUsage.toFixed(0);
         } else {
             return "";
         }
+    };
+});
+
+teksavvyApp.controller('SettingsSheetController', function($scope, $mdBottomSheet) {
+    $scope.textElements = {
+        settingsHeader: "Settings",
+        apiKey: "API Key",
+        save: "Save"
+    };
+
+    $scope.onClickSave = function() {
+        var that = this;
+
+        //Save API Key and request usage
+        chrome.storage.sync.set({
+            'apiKey': this.settings.apiKey
+        }, function() {
+            that.requestUsage();
+        });
+
+        //Save Maximum Usage
+        chrome.storage.sync.set({
+            'maximumUsage': this.maximumUsage
+        }, function() {
+            that.setCurrentMonthValues();
+        });
     };
 });

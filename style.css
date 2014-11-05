@@ -1,12 +1,7 @@
 body {
-    min-width: 19rem;
+    min-width: 25rem;
+    height: 20rem;
     overflow-x: hidden;
-    font-family: arial;
-}
-h1 {
-    font-weight: bold;
-    font-size: 16pt;
-    text-align: center;
 }
 .horizontalSpaceAboveX1 {
     margin-top: 0.5rem;
@@ -19,4 +14,8 @@ h1 {
 }
 #settingsTitle {
 	display: inline-block;
+}
+.tsButton {
+	width: 8rem;
+	font-size: 0.7rem;
 }

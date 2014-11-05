@@ -1,0 +1,15 @@
+<md-bottom-sheet class="md-list md-has-header">
+    <md-subheader>{{textElements.settingsHeader}}</md-subheader>
+    <div class="horizontalSpaceAboveX1">
+            <div>{{textElements.apiKey}}</div>
+        </div>
+        <div>
+            <input id="apiKeyInputValue" type="text" ng-model="settings.apiKey" />
+        </div>
+
+        <div class="horizontalSpaceAboveX1">{{textElements.maxMonthlyUsage}}</div>
+        <select ng-model="maximumUsage" ng-options="usage.name for usage in usageValues track by usage.name">
+        </select>
+        
+        <md-button ng-click="onClickSave()"  class="md-raised">{{textElements.save}}</md-button>
+</md-bottom-sheet>
