@@ -34,17 +34,10 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
     $scope.init = function() {
         var that = this;
 
-        //Retreive maximum usage - if saved
-        chrome.storage.sync.get('maximumUsage', function(data) {
-            if (data.maximumUsage) {
-                that.settings.maximumUsage = data.maximumUsage; 
-            }
-        });
-
-        //Retreive API key - if saved then request usage
-        chrome.storage.sync.get('apiKey', function(data) {
-            if (data.apiKey) {
-                that.settings.apiKey = data.apiKey;
+        //Retreive settings - if saved
+        chrome.storage.sync.get('settings', function(data) {
+            if (data.settings) {
+                that.settings = data.settings; 
                 that.requestUsage();
             }
         });
@@ -59,16 +52,10 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
             targetEvent: $event
         }).then(function(newSettings) {
             //settings are returned from dialog, save to chrome storage and refresh usage data
-
             chrome.storage.sync.set({
-                'apiKey': newSettings.apiKey
+                'settings': newSettings
             }, function() {
                 that.requestUsage();
-            });
-
-            chrome.storage.sync.set({
-                'maximumUsage': newSettings.maximumUsage
-            }, function() {
                 that.setCurrentMonthValues();
             });
         });
