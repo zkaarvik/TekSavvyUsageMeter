@@ -16,13 +16,38 @@ body {
 	font-size: 1.4em;
 	color: rgba(0,0,0,0.8);
 }
-#settingsTitle {
-	display: inline-block;
-}
 .tsButton {
 	width: 8rem;
 	font-size: 0.7rem;
 }
 .titleFontSize {
 	font-size: 1.3em;
+}
+
+
+#settingsTitle {
+	display: inline-block;
+}
+#usageCircle {
+	margin-top: 3em;
+	margin-bottom: 1em;
+}
+#usageContainer {
+	position: relative;
+	height: 7rem;
+}
+#usageContainer > md-progress-circular {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translate(-50%, 0) scale(1.5625)  !important;
+}
+/* !important is necessary here because otherwise the angular material
+** library will override it regardless of specificity */
+#usageContainer > div {
+	position: absolute;
+	left: 50%;
+	top: 3.4rem;
+	transform: translate(-50%, 0);
+	font-weight: 900;
 }

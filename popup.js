@@ -111,7 +111,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
             var iPercentageUsage = (iUsage / parseInt(iMaximumUsage) * 100);
             return iPercentageUsage.toFixed(0);
         } else {
-            return "";
+            return "0";
         }
     };
 }]);
@@ -135,10 +135,10 @@ teksavvyApp.filter('percentage', function() {
     return function(input) {
         var numberInput = parseInt(input);
 
-        if(typeof(numberInput) === "number" && numberInput !== 0 && numberInput !== "NaN") {
-            return input.toString() + "%";
-        } else {
+        if(typeof(numberInput) !== "number" || numberInput === 0 || isNaN(numberInput)) {
             return "";
+        } else {
+            return input.toString() + "%";
         }
     };
 })

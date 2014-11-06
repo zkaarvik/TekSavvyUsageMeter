@@ -30,6 +30,11 @@
         </div>
     </md-toolbar>
 
+    <div id="usageContainer" layout="vertical" layout-align="end center">
+        <md-progress-circular id="usageCircle" mode="determinate" value="{{amounts.currentMonthPercentage}}"></md-progress-circular>
+        <div>{{amounts.currentMonthPercentage | percentage}}</div>
+    </div>
+
     <!-- Main Content -->
     <div layout="vertical" layout-align="center center">
         <div class="horizontalSpaceAboveX2">{{textElements.currentUsage}}</div>
@@ -37,8 +42,8 @@
         <div class="horizontalSpaceAboveX1">{{amounts.currentMonthAmount}}</div>
         <div>{{amounts.currentMonthAmountError}}</div>
         <div>{{amounts.currentMonthPercentage | percentage}}</div>
-        <md-progress-circular mode="determinate" value="{{amounts.currentMonthPercentage}}"></md-progress-circular>
     </div>
+
 
 </body>
 
