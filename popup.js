@@ -1,26 +1,11 @@
 var teksavvyApp = angular.module('teksavvyApp', ['ngMaterial']);
 
-teksavvyApp.controller('AppController', function($scope, $mdBottomSheet) {
+teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($scope, $mdBottomSheet) {
     $scope.textElements = {
         title: "TekSavvy Usage Meter",
         currentUsage: "Current Monthly Usage:",
-        settings: "Settings",
-        maxMonthlyUsage: "Maximum Monthly Usage"
+        settings: "Settings"
     };
-
-    $scope.usageValues = [{
-        name: "75 GB",
-        value: 75
-    }, {
-        name: "150 GB",
-        value: 150
-    }, {
-        name: "300 GB",
-        value: 300
-    }, {
-        name: "Unlimited",
-        value: 0
-    }];
 
     $scope.sUsageURL = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
     $scope.settingsVisible = false;
@@ -39,7 +24,11 @@ teksavvyApp.controller('AppController', function($scope, $mdBottomSheet) {
         iOffPeakTotal: ""
     };
     $scope.settings = {
-        apiKey: ""
+        apiKey: "",
+        maximumUsage: {
+            name: "",
+            value: 0
+        }
     };
 
     $scope.init = function() {
@@ -48,7 +37,7 @@ teksavvyApp.controller('AppController', function($scope, $mdBottomSheet) {
         //Retreive maximum usage - if saved
         chrome.storage.sync.get('maximumUsage', function(data) {
             if (data.maximumUsage) {
-                that.maximumUsage = data.maximumUsage; 
+                that.settings.maximumUsage = data.maximumUsage; 
             }
         });
 
@@ -62,11 +51,28 @@ teksavvyApp.controller('AppController', function($scope, $mdBottomSheet) {
     };
 
     $scope.onClickSettings = function($event) {
+        var that = this;
         $mdBottomSheet.show({
             templateUrl: 'settings-list-template.html',
             controller: 'SettingsSheetController',
+            locals: {settings: this.settings},
             targetEvent: $event
+        }).then(function(newSettings) {
+            //settings are returned from dialog, save to chrome storage and refresh usage data
+
+            chrome.storage.sync.set({
+                'apiKey': newSettings.apiKey
+            }, function() {
+                that.requestUsage();
+            });
+
+            chrome.storage.sync.set({
+                'maximumUsage': newSettings.maximumUsage
+            }, function() {
+                that.setCurrentMonthValues();
+            });
         });
+
     };
 
     $scope.requestUsage = function() {
@@ -111,7 +117,7 @@ teksavvyApp.controller('AppController', function($scope, $mdBottomSheet) {
     $scope.setCurrentMonthValues = function() {
         this.amounts.currentMonthAmount = this.usage.iPeakDownload.toFixed(2).toString() + " GB";
         this.amounts.currentMonthAmountError = "";
-        this.amounts.currentMonthPercentage = this.getUsagePercentage(this.usage.iPeakDownload, this.maximumUsage.value);
+        this.amounts.currentMonthPercentage = this.getUsagePercentage(this.usage.iPeakDownload, this.settings.maximumUsage.value);
     };
 
     $scope.getUsagePercentage = function(iUsage, iMaximumUsage) {
@@ -122,30 +128,33 @@ teksavvyApp.controller('AppController', function($scope, $mdBottomSheet) {
             return "";
         }
     };
-});
+}]);
 
-teksavvyApp.controller('SettingsSheetController', function($scope, $mdBottomSheet) {
+teksavvyApp.controller('SettingsSheetController', ['$scope', '$mdBottomSheet', 'settings', function($scope, $mdBottomSheet, settings) {
     $scope.textElements = {
         settingsHeader: "Settings",
         apiKey: "API Key",
-        save: "Save"
+        save: "Save",
+        maxMonthlyUsage: "Maximum Monthly Usage"
     };
+
+    $scope.usageValues = [{
+        name: "75 GB",
+        value: 75
+    }, {
+        name: "150 GB",
+        value: 150
+    }, {
+        name: "300 GB",
+        value: 300
+    }, {
+        name: "Unlimited",
+        value: 0
+    }];
+
+    $scope.settings = settings;
 
     $scope.onClickSave = function() {
-        var that = this;
-
-        //Save API Key and request usage
-        chrome.storage.sync.set({
-            'apiKey': this.settings.apiKey
-        }, function() {
-            that.requestUsage();
-        });
-
-        //Save Maximum Usage
-        chrome.storage.sync.set({
-            'maximumUsage': this.maximumUsage
-        }, function() {
-            that.setCurrentMonthValues();
-        });
+        $mdBottomSheet.hide(this.settings);
     };
-});
+}]);
