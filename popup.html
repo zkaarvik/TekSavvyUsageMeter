@@ -37,7 +37,7 @@
         <md-progress-linear mode="indeterminate" ng-show="progressVisible"></md-progress-linear>
         <div class="horizontalSpaceAboveX1">{{amounts.currentMonthAmount}}</div>
         <div>{{amounts.currentMonthAmountError}}</div>
-        <div>{{amounts.currentMonthPercentage + '%'}}</div>
+        <div>{{amounts.currentMonthPercentage | percentage}}</div>
         <md-progress-circular mode="determinate" value="{{amounts.currentMonthPercentage}}"></md-progress-circular>
     </div>
 

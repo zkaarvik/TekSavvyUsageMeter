@@ -25,10 +25,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
     };
     $scope.settings = {
         apiKey: "",
-        maximumUsage: {
-            name: "",
-            value: 0
-        }
+        maximumUsage: 0
     };
 
     $scope.init = function() {
@@ -106,7 +103,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
     $scope.setCurrentMonthValues = function() {
         this.amounts.currentMonthAmount = this.usage.iPeakDownload.toFixed(2).toString() + " GB";
         this.amounts.currentMonthAmountError = "";
-        this.amounts.currentMonthPercentage = this.getUsagePercentage(this.usage.iPeakDownload, this.settings.maximumUsage.value);
+        this.amounts.currentMonthPercentage = this.getUsagePercentage(this.usage.iPeakDownload, this.settings.maximumUsage);
     };
 
     $scope.getUsagePercentage = function(iUsage, iMaximumUsage) {
@@ -124,22 +121,8 @@ teksavvyApp.controller('SettingsSheetController', ['$scope', '$mdBottomSheet', '
         settingsHeader: "Settings",
         apiKey: "API Key",
         save: "Save",
-        maxMonthlyUsage: "Maximum Monthly Usage"
+        bandwidthCap: "Monthly Bandwidth Cap (GB)"
     };
-
-    $scope.usageValues = [{
-        name: "75 GB",
-        value: 75
-    }, {
-        name: "150 GB",
-        value: 150
-    }, {
-        name: "300 GB",
-        value: 300
-    }, {
-        name: "Unlimited",
-        value: 0
-    }];
 
     $scope.settings = settings;
 
@@ -147,3 +130,15 @@ teksavvyApp.controller('SettingsSheetController', ['$scope', '$mdBottomSheet', '
         $mdBottomSheet.hide(this.settings);
     };
 }]);
+
+teksavvyApp.filter('percentage', function() {
+    return function(input) {
+        var numberInput = parseInt(input);
+
+        if(typeof(numberInput) === "number" && numberInput !== 0 && numberInput !== "NaN") {
+            return input.toString() + "%";
+        } else {
+            return "";
+        }
+    };
+})

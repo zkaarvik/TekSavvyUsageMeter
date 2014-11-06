@@ -9,8 +9,12 @@ body {
 .horizontalSpaceAboveX2 {
     margin-top: 1rem;
 }
-#apiKeyInputValue {
-    width: 16rem;
+.settingsInput input {
+    width: 13rem;
+}
+.settingsInput label {
+	font-size: 1.4em;
+	color: rgba(0,0,0,0.8);
 }
 #settingsTitle {
 	display: inline-block;

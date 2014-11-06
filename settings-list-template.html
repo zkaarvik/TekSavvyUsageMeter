@@ -1,15 +1,9 @@
 <md-bottom-sheet class="md-list md-has-header">
     <md-subheader>{{textElements.settingsHeader}}</md-subheader>
-    <div class="horizontalSpaceAboveX1">
-            <div>{{textElements.apiKey}}</div>
-        </div>
-        <div>
-            <input id="apiKeyInputValue" type="text" ng-model="settings.apiKey" />
-        </div>
 
-        <div class="horizontalSpaceAboveX1">{{textElements.maxMonthlyUsage}}</div>
-        <select ng-model="settings.maximumUsage" ng-options="usage.name for usage in usageValues track by usage.name">
-        </select>
-        
-        <md-button ng-click="onClickSave()"  class="md-raised">{{textElements.save}}</md-button>
+    <md-text-float class="settingsInput" spellcheck="false" label="{{textElements.apiKey}}" ng-model="settings.apiKey"></md-text-float>
+
+    <md-text-float class="settingsInput" type="number" spellcheck="false" label="{{textElements.bandwidthCap}}" ng-model="settings.maximumUsage"></md-text-float>
+    
+    <md-button ng-click="onClickSave()"  class="md-raised">{{textElements.save}}</md-button>
 </md-bottom-sheet>
