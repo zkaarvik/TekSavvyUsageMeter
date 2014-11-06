@@ -1,9 +1,11 @@
 <md-bottom-sheet class="md-list md-has-header">
-    <md-subheader>{{textElements.settingsHeader}}</md-subheader>
+    <div layout="vertical" layout-align="center center">
+        <md-subheader class="titleFontSize">{{textElements.settingsHeader}}</md-subheader>
 
-    <md-text-float class="settingsInput" spellcheck="false" label="{{textElements.apiKey}}" ng-model="settings.apiKey"></md-text-float>
+        <md-text-float class="settingsInput" spellcheck="false" label="{{textElements.apiKey}}" ng-model="settings.apiKey"></md-text-float>
 
-    <md-text-float class="settingsInput" type="number" spellcheck="false" label="{{textElements.bandwidthCap}}" ng-model="settings.maximumUsage"></md-text-float>
-    
-    <md-button ng-click="onClickSave()"  class="md-raised">{{textElements.save}}</md-button>
+        <md-text-float class="settingsInput" type="number" spellcheck="false" label="{{textElements.bandwidthCap}}" ng-model="settings.maximumUsage"></md-text-float>
+
+        <md-button ng-click="onClickSave()"  class="md-raised">{{textElements.save}}</md-button>
+    </div>
 </md-bottom-sheet>
