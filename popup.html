@@ -20,30 +20,34 @@
 
 <body ng-controller="AppController" ng-init="init()">
 
-    <!-- Header toolbar -->
-    <md-toolbar>
-        <div layout="horizontal" layout-align="center center">
-            <h2 class="md-toolbar-tools titleFontSize">
-                <span>{{textElements.title}}</span>
-            </h2>
-            <md-button ng-click="onClickSettings($event)" class="tsButton">{{textElements.settings}}</md-button>
-        </div>
-    </md-toolbar>
-
-    <div id="usageContainer" layout="vertical" layout-align="end center">
-        <md-progress-circular id="usageCircle" mode="determinate" value="{{amounts.currentMonthPercentage}}"></md-progress-circular>
-        <div>{{amounts.currentMonthPercentage | percentage}}</div>
-    </div>
-
-    <!-- Main Content -->
     <div layout="vertical" layout-align="center center">
-        <div class="horizontalSpaceAboveX2">{{textElements.currentUsage}}</div>
-        <md-progress-linear mode="indeterminate" ng-show="progressVisible"></md-progress-linear>
-        <div class="horizontalSpaceAboveX1">{{amounts.currentMonthAmount}}</div>
-        <div>{{amounts.currentMonthAmountError}}</div>
-        <div>{{amounts.currentMonthPercentage | percentage}}</div>
-    </div>
 
+        <!-- Header toolbar -->
+        <md-toolbar>
+            <div layout="horizontal" layout-align="center center">
+                <h2 class="md-toolbar-tools titleFontSize">
+                    <span>{{textElements.title}}</span>
+                </h2>
+                <md-button ng-click="onClickSettings($event)" class="tsButton">{{textElements.settings}}</md-button>
+            </div>
+            <md-progress-linear mode="indeterminate" ng-show="progressVisible"></md-progress-linear>
+        </md-toolbar>
+
+        <div id="usageContainer" layout="vertical" layout-align="end center">
+            <md-progress-circular class="usageCircle" mode="determinate" value="100"></md-progress-circular>
+            <md-progress-circular class="usageCircle" mode="determinate" value="{{amounts.currentMonthPercentage}}"></md-progress-circular>
+            <div>{{amounts.currentMonthPercentage | percentage}}</div>
+        </div>
+
+        <!-- Main Content -->
+        <div layout="vertical" layout-align="center center">
+            <div class="horizontalSpaceAboveX2">{{textElements.currentUsage}}</div>
+            <div class="horizontalSpaceAboveX1">{{amounts.currentMonthAmount}}</div>
+            <div>{{amounts.currentMonthAmountError}}</div>
+            <div>{{amounts.currentMonthPercentage | percentage}}</div>
+        </div>
+
+    </div>
 
 </body>
 

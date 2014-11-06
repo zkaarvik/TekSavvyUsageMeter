@@ -23,14 +23,15 @@ body {
 .titleFontSize {
 	font-size: 1.3em;
 }
+.usageCircle {
+	margin-top: 3em;
+	margin-bottom: 1em;
+	background-color: transparent;
+}
 
 
 #settingsTitle {
 	display: inline-block;
-}
-#usageCircle {
-	margin-top: 3em;
-	margin-bottom: 1em;
 }
 #usageContainer {
 	position: relative;
@@ -50,4 +51,7 @@ body {
 	top: 3.4rem;
 	transform: translate(-50%, 0);
 	font-weight: 900;
+}
+#usageContainer > .usageCircle:first-of-type .md-fill {
+	background-color: #D3D3D3;
 }
