@@ -8,8 +8,10 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
     };
 
     $scope.sUsageURL = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
-    $scope.settingsVisible = false;
-    $scope.progressVisible = false;
+    $scope.state = {
+        progressVisible: false,
+        usagePercentageContainerVisible: false
+    };
     $scope.amounts = {
         currentMonthAmount: "",
         currentMonthAmountError: "",
@@ -63,7 +65,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
 
     $scope.requestUsage = function() {
         //Start request - show progress meter
-        this.progressVisible = true;
+        this.state.progressVisible = true;
         $scope.$digest();
 
         var sApiKey = this.settings.apiKey;
@@ -93,10 +95,8 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
             this.setCurrentMonthValues();
         }
 
-        //Experienced issue with view updating, manually trigger update
-
         //Start request - show progress meter
-        this.progressVisible = false;
+        this.state.progressVisible = false;
         $scope.$digest();
     };
 
@@ -104,6 +104,24 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
         this.amounts.currentMonthAmount = this.usage.iPeakDownload.toFixed(2).toString() + " GB";
         this.amounts.currentMonthAmountError = "";
         this.amounts.currentMonthPercentage = this.getUsagePercentage(this.usage.iPeakDownload, this.settings.maximumUsage);
+        
+        //Show usage percentage if maximum usage !== 0, otherwise hide
+        if(this.settings.maximumUsage && this.settings.maximumUsage !== 0) {
+            //Setting the percentage to zero and back to the real value after a timeout preserves the animation
+            //  being broken from initially hiding the usage percentage container
+            var tempPercentage = this.amounts.currentMonthPercentage;
+            this.amounts.currentMonthPercentage = 0;
+            this.state.usagePercentageContainerVisible = true;
+
+            var that = this;
+            setTimeout( function() {
+                that.amounts.currentMonthPercentage = tempPercentage;
+                $scope.$digest();
+            }, 20 );
+
+        } else {
+            this.state.usagePercentageContainerVisible = false;
+        }
     };
 
     $scope.getUsagePercentage = function(iUsage, iMaximumUsage) {

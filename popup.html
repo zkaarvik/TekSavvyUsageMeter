@@ -30,10 +30,10 @@
                 </h2>
                 <md-button ng-click="onClickSettings($event)" class="tsButton">{{textElements.settings}}</md-button>
             </div>
-            <md-progress-linear mode="indeterminate" ng-show="progressVisible"></md-progress-linear>
+            <md-progress-linear mode="indeterminate" ng-show="state.progressVisible"></md-progress-linear>
         </md-toolbar>
 
-        <div id="usageContainer" layout="vertical" layout-align="end center">
+        <div id="usagePercentageContainer" layout="vertical" layout-align="end center" ng-show="state.usagePercentageContainerVisible">
             <md-progress-circular class="usageCircle" mode="determinate" value="100"></md-progress-circular>
             <md-progress-circular class="usageCircle" mode="determinate" value="{{amounts.currentMonthPercentage}}"></md-progress-circular>
             <div>{{amounts.currentMonthPercentage | percentage}}</div>

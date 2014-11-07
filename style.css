@@ -33,11 +33,11 @@ body {
 #settingsTitle {
 	display: inline-block;
 }
-#usageContainer {
+#usagePercentageContainer {
 	position: relative;
 	height: 7rem;
 }
-#usageContainer > md-progress-circular {
+#usagePercentageContainer > md-progress-circular {
 	position: absolute;
 	top: 0;
 	left: 50%;
@@ -45,13 +45,13 @@ body {
 }
 /* !important is necessary here because otherwise the angular material
 ** library will override it regardless of specificity */
-#usageContainer > div {
+#usagePercentageContainer > div {
 	position: absolute;
 	left: 50%;
 	top: 3.4rem;
 	transform: translate(-50%, 0);
 	font-weight: 900;
 }
-#usageContainer > .usageCircle:first-of-type .md-fill {
+#usagePercentageContainer > .usageCircle:first-of-type .md-fill {
 	background-color: #D3D3D3;
 }
