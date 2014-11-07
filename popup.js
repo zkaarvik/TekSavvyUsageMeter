@@ -2,15 +2,16 @@ var teksavvyApp = angular.module('teksavvyApp', ['ngMaterial']);
 
 teksavvyApp.controller('AppController', ['$scope', '$http', '$mdBottomSheet', '$mdToast', function($scope, $http, $mdBottomSheet, $mdToast) {
     $scope.textElements = {
-        title: "TekSavvy Usage Meter",
-        currentUsage: "Current Monthly Usage:",
-        settings: "Settings",
-        peakDownload: "Peak Download",
-        peakUpload: "Peak Upload",
-        peakTotal: "Peak Total",
-        offPeakDownload: "Off Peak Download",
-        offPeakUpload: "Off Peak Upload",
-        offPeakTotal: "Off Peak Total"
+        title: chrome.i18n.getMessage("title"),
+        currentUsage: chrome.i18n.getMessage("currentUsage"),
+        settings: chrome.i18n.getMessage("settings"),
+        peakDownload: chrome.i18n.getMessage("peakDownload"),
+        peakUpload: chrome.i18n.getMessage("peakUpload"),
+        peakTotal: chrome.i18n.getMessage("peakTotal"),
+        offPeakDownload: chrome.i18n.getMessage("offPeakDownload"),
+        offPeakUpload: chrome.i18n.getMessage("offPeakUpload"),
+        offPeakTotal: chrome.i18n.getMessage("offPeakTotal"),
+        apiKeyError: chrome.i18n.getMessage("apiKeyError")
     };
 
     $scope.sTekSavvyApiUrl = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
@@ -99,7 +100,7 @@ teksavvyApp.controller('AppController', ['$scope', '$http', '$mdBottomSheet', '$
                 that.amounts.currentMonthPercentage = "";
 
                 $mdToast.show({
-                  template: '<md-toast>API key missing or invalid. Check settings.</md-toast>',
+                  template: '<md-toast>' + that.textElements.apiKeyError + '</md-toast>',
                   hideDelay: 3000
                 });
                 that.state.usagePercentageContainerVisible = false;
@@ -147,10 +148,10 @@ teksavvyApp.controller('AppController', ['$scope', '$http', '$mdBottomSheet', '$
 
 teksavvyApp.controller('SettingsSheetController', ['$scope', '$mdBottomSheet', 'settings', function($scope, $mdBottomSheet, settings) {
     $scope.textElements = {
-        settingsHeader: "Settings",
-        apiKey: "API Key",
-        save: "Save",
-        bandwidthCap: "Bandwidth Cap (GB) (Optional)"
+        settingsHeader: chrome.i18n.getMessage("settingsHeader"),
+        apiKey: chrome.i18n.getMessage("apiKey"),
+        save: chrome.i18n.getMessage("save"),
+        bandwidthCap: chrome.i18n.getMessage("bandwidthCap")
     };
 
     $scope.settings = settings;

@@ -1,9 +1,10 @@
 {
   "manifest_version": 2,
 
-  "name": "TekSavvy Usage Meter",
-  "description": "Display your internet usage for the current month",
+  "name": "__MSG_appName__",
+  "description": "__MSG_appDesc__",
   "version": "1.0",
+  "default_locale": "en",
 
   "permissions": [
     "storage",

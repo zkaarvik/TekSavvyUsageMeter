@@ -1,0 +1,50 @@
+{
+  	"appName": {
+    	"message": "TekSavvy Usage Meter"
+  	},
+  	"appDesc": {
+    	"message": "Display your internet usage for the current month."
+  	},
+  	"title": {
+  		"message": "TekSavvy Usage Meter"
+  	},
+	"currentUsage": {
+		"message": "Current Monthly Usage:"
+	},
+	"settings": {
+		"message": "Settings"
+	},
+	"peakDownload": {
+		"message": "Peak Download"
+	},
+	"peakUpload": {
+		"message": "Peak Upload"
+	},
+	"peakTotal": {
+		"message": "Peak Total"
+	},
+	"offPeakDownload": {
+		"message": "Off Peak Download"
+	},
+	"offPeakUpload": {
+		"message": "Off Peak Upload"
+	},
+	"offPeakTotal": {
+		"message": "Off Peak Total"
+	},
+	"apiKeyError": {
+		"message": "API key missing or invalid. Check settings."
+	},
+	"settingsHeader": {
+		"message": "Settings"
+	},
+	"apiKey": {
+		"message": "API Key"
+	},
+	"save": {
+		"message": "Save"
+	},
+	"bandwidthCap": {
+		"message": "Bandwidth Cap (GB) (Optional)"
+	}
+}
