@@ -43,8 +43,8 @@ teksavvyApp.controller('AppController', ['$scope', '$http', '$mdBottomSheet', '$
         chrome.storage.sync.get('settings', function(data) {
             if (data.settings) {
                 that.settings = data.settings; 
-                that.requestUsage();
             }
+            that.requestUsage();
         });
     };
 
@@ -91,7 +91,7 @@ teksavvyApp.controller('AppController', ['$scope', '$http', '$mdBottomSheet', '$
 
                 //End request - hide progress meter
                 that.state.progressVisible = false;
-                
+
             }).
             error(function(data, status, headers, config) {
                 //API Key bad - display error 

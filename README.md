@@ -1,8 +1,6 @@
 TekSavvyUsageMeter
 ==================
 
-Very simple chrome extension to view your current usage for the month. Will display the amount of usage that counts towards your monthly limit (peak download only). 
+Simple chrome extension to view your current usage for the month. The extension displays your usage for on and off peak periods, both upload and download as well as a percentage of your monthly cap, if applicable. 
 
-You will need your API key, which can be found on the tekSavvy website. 
-
-Currently in a working but unfinished state. I would like to refine the UI as well as add some additional features, like a usage graph.
+You will need your API key, which can be found on the tekSavvy website (https://myaccount.teksavvy.com/ApiKey/ApiKeyManagement). 
