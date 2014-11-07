@@ -7,7 +7,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
         settings: "Settings"
     };
 
-    $scope.sUsageURL = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
+    $scope.sTekSavvyApiUrl = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
     $scope.state = {
         progressVisible: false,
         usagePercentageContainerVisible: false
@@ -70,7 +70,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
 
         var sApiKey = this.settings.apiKey;
         var req = new XMLHttpRequest();
-        req.open("GET", this.sUsageURL, true);
+        req.open("GET", this.sTekSavvyApiUrl, true);
         req.setRequestHeader("TekSavvy-APIKey", sApiKey);
         req.onload = this.onRequestUsageSuccess.bind(this);
         req.send(null);
