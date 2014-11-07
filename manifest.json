@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "TekSavvy Usage Meter",
-  "description": "Display your current data usage for the month",
-  "version": "0.2",
+  "description": "Display your internet usage for the current month",
+  "version": "1.0",
 
   "permissions": [
     "storage",
