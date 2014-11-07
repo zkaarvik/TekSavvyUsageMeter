@@ -62,3 +62,8 @@ body {
 	font-size: 2.5rem;
 	font-weight: 600;
 }
+/* Overriding the default behaviour of angular to display:none for hidden items, to preserve spacing */
+#progressBar.ng-hide {
+	visibility: hidden !important;
+	display: block !important;
+}
