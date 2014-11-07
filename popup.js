@@ -1,10 +1,16 @@
 var teksavvyApp = angular.module('teksavvyApp', ['ngMaterial']);
 
-teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($scope, $mdBottomSheet) {
+teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', '$mdToast', function($scope, $mdBottomSheet, $mdToast) {
     $scope.textElements = {
         title: "TekSavvy Usage Meter",
         currentUsage: "Current Monthly Usage:",
-        settings: "Settings"
+        settings: "Settings",
+        peakDownload: "Peak Download",
+        peakUpload: "Peak Upload",
+        peakTotal: "Peak Total",
+        offPeakDownload: "Off Peak Download",
+        offPeakUpload: "Off Peak Upload",
+        offPeakTotal: "Off Peak Total"
     };
 
     $scope.sTekSavvyApiUrl = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
@@ -14,7 +20,6 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
     };
     $scope.amounts = {
         currentMonthAmount: "",
-        currentMonthAmountError: "",
         currentMonthPercentage: ""
     };
     $scope.usage = {
@@ -80,8 +85,13 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
         if (!e.target.response) {
             //API Key bad - display error 
             this.amounts.currentMonthAmount = "";
-            this.amounts.currentMonthAmountError = "Error retreiving data: Check API Key";
             this.amounts.currentMonthPercentage = "";
+
+            $mdToast.show({
+              template: '<md-toast>API key missing or invalid. Check settings.</md-toast>',
+              hideDelay: 3000
+            });
+            this.state.usagePercentageContainerVisible = false;
         } else {
             var oUsage = JSON.parse(e.target.response);
 
@@ -102,7 +112,6 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', function($s
 
     $scope.setCurrentMonthValues = function() {
         this.amounts.currentMonthAmount = this.usage.iPeakDownload.toFixed(2).toString() + " GB";
-        this.amounts.currentMonthAmountError = "";
         this.amounts.currentMonthPercentage = this.getUsagePercentage(this.usage.iPeakDownload, this.settings.maximumUsage);
         
         //Show usage percentage if maximum usage !== 0, otherwise hide
@@ -139,7 +148,7 @@ teksavvyApp.controller('SettingsSheetController', ['$scope', '$mdBottomSheet', '
         settingsHeader: "Settings",
         apiKey: "API Key",
         save: "Save",
-        bandwidthCap: "Monthly Bandwidth Cap (GB)"
+        bandwidthCap: "Bandwidth Cap (GB) (Optional)"
     };
 
     $scope.settings = settings;
@@ -159,4 +168,16 @@ teksavvyApp.filter('percentage', function() {
             return input.toString() + "%";
         }
     };
-})
+});
+
+teksavvyApp.filter('GB', function() {
+    return function(input) {
+        var numberInput = parseInt(input);
+
+        if(typeof(numberInput) !== "number" || isNaN(numberInput)) {
+            return "";
+        } else {
+            return input.toString() + " GB";
+        }
+    };
+});

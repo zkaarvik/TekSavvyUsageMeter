@@ -20,31 +20,61 @@
 
 <body ng-controller="AppController" ng-init="init()">
 
-    <div layout="vertical" layout-align="center center">
+    <div layout="vertical" layout-align="space-between" style="height: 90%;">
 
         <!-- Header toolbar -->
-        <md-toolbar>
-            <div layout="horizontal" layout-align="center center">
-                <h2 class="md-toolbar-tools titleFontSize">
-                    <span>{{textElements.title}}</span>
-                </h2>
-                <md-button ng-click="onClickSettings($event)" class="tsButton">{{textElements.settings}}</md-button>
-            </div>
-            <md-progress-linear mode="indeterminate" ng-show="state.progressVisible"></md-progress-linear>
-        </md-toolbar>
+        <div>
+            <md-toolbar>
+                <div layout="horizontal" layout-align="center center">
+                    <h2 class="md-toolbar-tools titleFontSize">
+                        <span>{{textElements.title}}</span>
+                    </h2>
+                    <md-button ng-click="onClickSettings($event)" class="tsButton">{{textElements.settings}}</md-button>
+                </div>
+                <md-progress-linear mode="indeterminate" ng-show="state.progressVisible"></md-progress-linear>
+            </md-toolbar>
+        </div>
 
+        <!-- Usage Percentage - case where max usage !== 0 -->
         <div id="usagePercentageContainer" layout="vertical" layout-align="end center" ng-show="state.usagePercentageContainerVisible">
             <md-progress-circular class="usageCircle" mode="determinate" value="100"></md-progress-circular>
             <md-progress-circular class="usageCircle" mode="determinate" value="{{amounts.currentMonthPercentage}}"></md-progress-circular>
             <div>{{amounts.currentMonthPercentage | percentage}}</div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Peak download  - case where max usage === 0 (unlimited) -->
+        <div layout="vertical" layout-align="end center" ng-hide="state.usagePercentageContainerVisible">
+            <div id="usageBigNumber">{{usage.iPeakDownload | GB}}</div>
+        </div>
+
+        <!-- Detailed usage content -->
         <div layout="vertical" layout-align="center center">
-            <div class="horizontalSpaceAboveX2">{{textElements.currentUsage}}</div>
-            <div class="horizontalSpaceAboveX1">{{amounts.currentMonthAmount}}</div>
+            <div class="verticalSpaceAboveX2 verticalSpaceBelowX2">{{textElements.currentUsage}}</div>
             <div>{{amounts.currentMonthAmountError}}</div>
-            <div>{{amounts.currentMonthPercentage | percentage}}</div>
+            
+            <div layout="horizontal" layout-align="space-between" style="width: 80%;">
+                <div layout="vertical">
+                    <div>{{textElements.peakDownload}}</div>
+                    <div class="verticalSpaceBelowX1">{{usage.iPeakDownload | GB}}</div>
+
+                    <div>{{textElements.offPeakDownload}}</div>
+                    <div>{{usage.iOffPeakDownload | GB}}</div>
+                </div>
+                <div layout="vertical">
+                    <div>{{textElements.peakUpload}}</div>
+                    <div class="verticalSpaceBelowX1">{{usage.iPeakUpload | GB}}</div>
+
+                    <div>{{textElements.offPeakUpload}}</div>
+                    <div>{{usage.iOffPeakUpload | GB}}</div>
+                </div>
+                <div layout="vertical">
+                    <div>{{textElements.peakTotal}}</div>
+                    <div class="verticalSpaceBelowX1">{{usage.iPeakTotal | GB}}</div>
+
+                    <div>{{textElements.offPeakTotal}}</div>
+                    <div>{{usage.iOffPeakTotal | GB}}</div>
+                </div>
+            </div>
         </div>
 
     </div>

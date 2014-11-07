@@ -3,14 +3,17 @@ body {
     height: 20rem;
     overflow-x: hidden;
 }
-.horizontalSpaceAboveX1 {
-    margin-top: 0.5rem;
-}
-.horizontalSpaceAboveX2 {
+.verticalSpaceAboveX2 {
     margin-top: 1rem;
 }
+.verticalSpaceBelowX1 {
+    margin-bottom: 0.5rem;
+}
+.verticalSpaceBelowX2 {
+    margin-bottom: 1rem;
+}
 .settingsInput input {
-    width: 13rem;
+    width: 14.5rem;
 }
 .settingsInput label {
 	font-size: 1.4em;
@@ -54,4 +57,8 @@ body {
 }
 #usagePercentageContainer > .usageCircle:first-of-type .md-fill {
 	background-color: #D3D3D3;
+}
+#usageBigNumber {
+	font-size: 2.5rem;
+	font-weight: 600;
 }
