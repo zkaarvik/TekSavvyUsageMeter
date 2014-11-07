@@ -43,7 +43,7 @@
         </div>
 
         <!-- Peak download  - case where max usage === 0 (unlimited) -->
-        <div layout="vertical" layout-align="end center" ng-hide="state.usagePercentageContainerVisible">
+        <div layout="vertical" layout-align="end center" ng-show="state.usageBigNumberContainerVisible">
             <div id="usageBigNumber">{{usage.iPeakDownload | GB}}</div>
         </div>
 

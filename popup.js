@@ -1,6 +1,6 @@
 var teksavvyApp = angular.module('teksavvyApp', ['ngMaterial']);
 
-teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', '$mdToast', function($scope, $mdBottomSheet, $mdToast) {
+teksavvyApp.controller('AppController', ['$scope', '$http', '$mdBottomSheet', '$mdToast', function($scope, $http, $mdBottomSheet, $mdToast) {
     $scope.textElements = {
         title: "TekSavvy Usage Meter",
         currentUsage: "Current Monthly Usage:",
@@ -16,7 +16,8 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', '$mdToast',
     $scope.sTekSavvyApiUrl = "https://api.teksavvy.com/web/Usage/UsageSummaryRecords?$filter=IsCurrent%20eq%20true";
     $scope.state = {
         progressVisible: false,
-        usagePercentageContainerVisible: false
+        usagePercentageContainerVisible: false,
+        usageBigNumberContainerVisible: false
     };
     $scope.amounts = {
         currentMonthAmount: "",
@@ -71,43 +72,42 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', '$mdToast',
     $scope.requestUsage = function() {
         //Start request - show progress meter
         this.state.progressVisible = true;
-        $scope.$digest();
 
-        var sApiKey = this.settings.apiKey;
-        var req = new XMLHttpRequest();
-        req.open("GET", this.sTekSavvyApiUrl, true);
-        req.setRequestHeader("TekSavvy-APIKey", sApiKey);
-        req.onload = this.onRequestUsageSuccess.bind(this);
-        req.send(null);
-    };
+        var that = this;
+        $http.get(this.sTekSavvyApiUrl, {
+                headers: {"TekSavvy-APIKey": this.settings.apiKey}
+            }).
+            success(function(data, status, headers, config) {
+                var oUsage = data.value[0];
 
-    $scope.onRequestUsageSuccess = function(e) {
-        if (!e.target.response) {
-            //API Key bad - display error 
-            this.amounts.currentMonthAmount = "";
-            this.amounts.currentMonthPercentage = "";
+                that.usage.iPeakDownload = oUsage.OnPeakDownload;
+                that.usage.iPeakUpload = oUsage.OnPeakUpload;
+                that.usage.iPeakTotal = that.usage.iPeakDownload + that.usage.iPeakUpload;
+                that.usage.iOffPeakDownload = oUsage.OffPeakDownload;
+                that.usage.iOffPeakUpload = oUsage.OffPeakUpload;
+                that.usage.iOffPeakTotal = that.usage.iOffPeakDownload + that.usage.iOffPeakUpload;
 
-            $mdToast.show({
-              template: '<md-toast>API key missing or invalid. Check settings.</md-toast>',
-              hideDelay: 3000
+                that.setCurrentMonthValues();
+
+                //End request - hide progress meter
+                that.state.progressVisible = false;
+                
+            }).
+            error(function(data, status, headers, config) {
+                //API Key bad - display error 
+                that.amounts.currentMonthAmount = "";
+                that.amounts.currentMonthPercentage = "";
+
+                $mdToast.show({
+                  template: '<md-toast>API key missing or invalid. Check settings.</md-toast>',
+                  hideDelay: 3000
+                });
+                that.state.usagePercentageContainerVisible = false;
+                that.state.usageBigNumberContainerVisible = false;
+
+                //End request - hide progress meter
+                that.state.progressVisible = false;
             });
-            this.state.usagePercentageContainerVisible = false;
-        } else {
-            var oUsage = JSON.parse(e.target.response);
-
-            this.usage.iPeakDownload = oUsage.value[0].OnPeakDownload;
-            this.usage.iPeakUpload = oUsage.value[0].OnPeakUpload;
-            this.usage.iPeakTotal = this.usage.iPeakDownload + this.usage.iPeakUpload;
-            this.usage.iOffPeakDownload = oUsage.value[0].OffPeakDownload;
-            this.usage.iOffPeakUpload = oUsage.value[0].OffPeakUpload;
-            this.usage.iOffPeakTotal = this.usage.iOffPeakDownload + this.usage.iOffPeakUpload;
-
-            this.setCurrentMonthValues();
-        }
-
-        //Start request - show progress meter
-        this.state.progressVisible = false;
-        $scope.$digest();
     };
 
     $scope.setCurrentMonthValues = function() {
@@ -121,6 +121,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', '$mdToast',
             var tempPercentage = this.amounts.currentMonthPercentage;
             this.amounts.currentMonthPercentage = 0;
             this.state.usagePercentageContainerVisible = true;
+            this.state.usageBigNumberContainerVisible = false;
 
             var that = this;
             setTimeout( function() {
@@ -130,6 +131,7 @@ teksavvyApp.controller('AppController', ['$scope', '$mdBottomSheet', '$mdToast',
 
         } else {
             this.state.usagePercentageContainerVisible = false;
+            this.state.usageBigNumberContainerVisible = true;
         }
     };
 
@@ -177,7 +179,7 @@ teksavvyApp.filter('GB', function() {
         if(typeof(numberInput) !== "number" || isNaN(numberInput)) {
             return "";
         } else {
-            return input.toString() + " GB";
+            return input.toFixed(2) + " GB";
         }
     };
 });
