@@ -11,7 +11,11 @@
     "https://api.teksavvy.com/"
   ],
   "browser_action": {
-    "default_icon": "img/icon.png",
+    "default_icon": "img/icon16.png",
     "default_popup": "popup.html"
+  },
+  "icons": { 
+    "16": "img/icon16.png",
+    "128": "img/icon128.png" 
   }
 }
